@@ -201,7 +201,7 @@ def calculate_impacts_for_activities(activities_list, methods_list, database_nam
             
             # Loop through each method
             for method in methods_list:
-                print(f"Calculating impacts for activity '{activity_name}' in location '{location}' using method '{method}'...")
+                print(f"\n -- Calculating impacts for activity '{activity_name}' in location '{location}' using method '{method}'...")
 
                 # Call the calculate_exchange_impacts function
                 try:
@@ -214,13 +214,13 @@ def calculate_impacts_for_activities(activities_list, methods_list, database_nam
                     }
 
                     # Optional: print the top results
-                    print(f"\nTop impacts for activity '{activity_name}' in location '{location}' and method '{method}':")
+                    print(f"\n ---- Top impacts for activity '{activity_name}' in location '{location}' and method '{method}':")
                     for exchange in sorted_impacts[:5]:  # Show top 5 for brevity
                         print(f"Exchange: {exchange['exchange_name']}, Type: {exchange['type']}, "
                               f"Compartment: {exchange['compartment']}, Impact: {exchange['impact']}")
 
                 except Exception as e:
-                    print(f"Failed to calculate impacts for {activity_name} in location {location} using {method} due to: {e}")
+                    print(f"\n -- Failed to calculate impacts for {activity_name} in location {location} using {method} due to: {e}")
         except ValueError as e:
             print(e)
 

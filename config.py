@@ -25,12 +25,12 @@ recipe_midpoint_h = [
     ('ReCiPe Midpoint (H)', 'ozone depletion', 'ODPinf')
 ]
 
-recipe_midpoint_article = [
+'''recipe_midpoint_article = [
     ('ReCiPe Midpoint (H)', 'natural land transformation', 'NLTP'),
     ('ReCiPe Midpoint (H)', 'climate change', 'GWP100'),
     ('ReCiPe Midpoint (H)', 'particulate matter formation', 'PMFP'),
     ('ReCiPe Midpoint (H)', 'water depletion', 'WDP')
-]
+]'''
 
 recipe_endpoint_h_a = [
     ('ReCiPe Endpoint (H,A)', 'human health', 'total'),
