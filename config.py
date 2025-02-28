@@ -87,7 +87,10 @@ db_remindSSP5_VSI = [
 
 
 activities_li = [
+    ('spodumene production', 'AU'),
+    ('spodumene production', 'RoW'),
     ('lithium carbonate production, from concentrated brine', 'GLO'),
+    ('lithium brine inspissation', 'GLO'),
     ('lithium carbonate production, from spodumene', 'RoW'),
     ('lithium carbonate production, from spodumene', 'CN')
 ]
@@ -96,18 +99,32 @@ reference_product_lithium = 'lithium carbonate'
 
 activities_ni = [
     ('treatment of metal part of electronics scrap, in copper, anode, by electrolytic refining', 'RoW'),
+
     ('platinum group metal mine operation, ore with high palladium content', 'RU'),
+
+    ('platinum group metal, mine and concentration operations', 'ZA'),
     ('platinum group metal, extraction and refinery operations', 'ZA'),
+
+    ('nickel mine operation and benefication to nickel concentrate, 16% Ni', 'CA-QC'),
     ('processing of nickel-rich materials', 'GLO'),
+    
+    ('nickel mine operation and benefication to nickel concentrate, 16% Ni', 'GLO'),
     ('smelting and refining of nickel concentrate, 16% Ni', 'GLO'),
+
+    ('nickel mine operation and benefication to nickel concentrate, 7% Ni', 'CN'),
     ('smelting and refining of nickel concentrate, 7% Ni', 'CN'),
-    ('treatment of metal part of electronics scrap, in copper, anode, by electrolytic refining', 'SE'),
-    ('cobalt production', 'GLO')
+
+    ('cobalt production', 'GLO'),
+
+    ('treatment of metal part of electronics scrap, in copper, anode, by electrolytic refining', 'SE')
 ]
 
 reference_product_nickel = 'nickel, class 1'
 
 activities_mn = [
+    ('manganese concentrate production','GLO'),
+    ('manganese(III) oxide production','CN'),
+    ('manganese(III) oxide production','RoW'),
     ('manganese dioxide production', 'GLO'),
     ('manganese sulfate production', 'GLO')
 ]
