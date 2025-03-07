@@ -135,3 +135,27 @@ def plot_comparative_radar_log_with_colored_table(comparative_results, methods_l
     plt.subplots_adjust(left=0.1, right=0.8, top=0.9, bottom=0.2)  # Adjust layout to give more space for the table
 
     plt.show()
+
+###############
+## SYNTHESIS ##
+###############
+
+def plot_activity_impact_changes(activity_name, df):
+    """
+    Plots VSI to Baseline % Change for all impact categories across SSPs for a given activity.
+    """
+    df_filtered = df[df["Activity"] == activity_name]
+
+    # Pivot data for grouped bar chart
+    df_pivot = df_filtered.pivot(index="Impact Category", columns="SSP", values="VSI to baseline change %")
+
+    df_pivot.plot(kind="bar", figsize=(10, 6), colormap="viridis", edgecolor="black")
+
+    plt.ylabel("VSI to Baseline % Change in 2040")
+    plt.title(f"Impact Change Across SSPs and impact catgories for \n {activity_name}")
+    plt.axhline(0, color='black', linewidth=1)
+    plt.xticks(rotation=45, ha="right")
+    plt.legend(title="SSP Scenario")
+    plt.grid(axis="y", linestyle="--", alpha=0.7)
+
+    plt.show()
