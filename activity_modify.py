@@ -351,7 +351,7 @@ def logistic_interpolation(x, x1, y1, x2, y2):
     - Interpolated coefficient value for year x.
     """
     # Logistic function parameters
-    L = y2  # Upper asymptote
+    L = y1  # Upper asymptote
     k = 1 / (x2 - x1)  # Growth rate
     x0 = (x1 + x2) / 2  # Midpoint
 
@@ -389,6 +389,7 @@ def process_all_csvs_interpolate(project_name, input_folder, methods_list, datab
             coeff_df['VSI_modify'] = coeff_df['VSI_modify'].fillna(False).astype(bool)
 
             # Interpolate missing coefficients for each row
+            # TBD -> Need to generalise for any time span
             for index, row in coeff_df.iterrows():
                 # Get known coefficient values
                 coeff_2025 = row['coeff_2025']
