@@ -11,6 +11,8 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 import os
 
+import numpy as np
+from scipy.optimize import curve_fit
 
 from database_setup import find_activity_by_name_product_location
 from database_setup import find_activity_by_id
@@ -335,28 +337,11 @@ def process_all_csvs(project_name, input_folder, methods_list, databases, years,
     return combined_results
 
 
+def direct_logistic(target_year, initial_year, lower, final_year, upper):
+    """Downward logistic from ~upper to ~lower."""
 
-def logistic_interpolation(x, x1, y1, x2, y2):
-    """
-    Perform logistic interpolation for a given x value.
-
-    Parameters:
-    - x: The year to interpolate (e.g., 2030).
-    - x1: The first known year (e.g., 2025).
-    - y1: The coefficient value for x1.
-    - x2: The second known year (e.g., 2040).
-    - y2: The coefficient value for x2.
-
-    Returns:
-    - Interpolated coefficient value for year x.
-    """
-    # Logistic function parameters
-    L = y1  # Upper asymptote
-    k = 1 / (x2 - x1)  # Growth rate
-    x0 = (x1 + x2) / 2  # Midpoint
-
-    # Logistic function
-    return L / (1 + np.exp(-k * (x - x0)))
+    k = (lower + upper) / 2.0
+    return lower + (upper - lower) / (1 + np.exp(k*(target_year - ((final_year + initial_year)/2))))
 
 
 def process_all_csvs_interpolate(project_name, input_folder, methods_list, databases, years, modify_permanently=False):
@@ -397,9 +382,9 @@ def process_all_csvs_interpolate(project_name, input_folder, methods_list, datab
 
                 # Interpolate missing coefficients using logistic function
                 if np.isnan(row.get('coeff_2030', np.nan)):
-                    coeff_df.at[index, 'coeff_2030'] = logistic_interpolation(2030, 2025, coeff_2025, 2040, coeff_2040)
+                    coeff_df.at[index, 'coeff_2030'] = direct_logistic(2030, 2025, coeff_2025, 2040, coeff_2040)
                 if np.isnan(row.get('coeff_2035', np.nan)):
-                    coeff_df.at[index, 'coeff_2035'] = logistic_interpolation(2035, 2025, coeff_2025, 2040, coeff_2040)
+                    coeff_df.at[index, 'coeff_2035'] = direct_logistic(2035, 2025, coeff_2025, 2040, coeff_2040)
 
             # Extract activity details
             activity_id = file_name.replace('.csv', '')  # Extract activity ID from file name
