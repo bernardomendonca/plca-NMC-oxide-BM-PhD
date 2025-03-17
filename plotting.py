@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+import seaborn as sns
 import textwrap
 import matplotlib.pyplot as plt
 
@@ -159,3 +161,136 @@ def plot_activity_impact_changes(activity_name, df):
     plt.grid(axis="y", linestyle="--", alpha=0.7)
 
     plt.show()
+
+
+###########################
+## CONTRIBUTION ANALYSIS ##
+###########################
+
+def visualize_contribution_all_activities_with_grid(csv_path):
+    # Load data
+    df = pd.read_csv(csv_path)
+    
+    # Convert percentage column to numeric
+    df['percentage'] = pd.to_numeric(df['percentage'], errors='coerce')
+
+    # Create a new column to clearly identify biosphere exchanges
+    df['sub_activity_label'] = df.apply(
+        lambda x: f"{x['sub_activity']} ({x['compartment']})" if x['exchange_type'] == 'biosphere' else x['sub_activity'], 
+        axis=1
+    )
+
+    # Get unique activities and their names
+    unique_activities = df[['activity_id', 'activity_name']].drop_duplicates()
+
+    print(f"Total Activities: {len(unique_activities)}")
+
+    # Loop through each unique activity
+    for _, row in unique_activities.iterrows():
+        activity_id = row['activity_id']
+        activity_name = row['activity_name']
+
+        # Filter data for this activity
+        subset = df[df['activity_id'] == activity_id]
+
+        if subset.empty:
+            continue
+
+        # Filter to sub-activities contributing at least 1%
+        subset = subset[subset['percentage'] >= 1]
+
+        # Pivot data for stacked bar chart
+        pivot_df = subset.pivot_table(
+            values="percentage", 
+            index="impact_indicator", 
+            columns="sub_activity_label", 
+            aggfunc="sum",
+            fill_value=0
+        )
+
+        # Define colors: different shades for technosphere and biosphere
+        color_map = {
+            sub_activity: "tab:blue" if subset[subset["sub_activity_label"] == sub_activity]["exchange_type"].iloc[0] == "technosphere"
+            else "tab:red"
+            for sub_activity in pivot_df.columns
+        }
+
+        # Plot
+        ax = pivot_df.plot(kind="bar", stacked=True, figsize=(12, 6), color=[color_map[sub] for sub in pivot_df.columns])
+
+        # Add grid for better readability
+        ax.grid(axis="y", linestyle="--", alpha=0.7)  # Dashed grid, slightly transparent
+
+        plt.title(f"Impact Breakdown for {activity_name}")
+        plt.xlabel("Impact Indicator")
+        plt.ylabel("Percentage Contribution")
+        plt.xticks(rotation=45, ha='right')
+        plt.legend(title="Sub-Activity (Biosphere includes Compartment)", bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        plt.show()
+
+def visualize_all_activities_with_detailed_biosphere(csv_path):
+    # Load data
+    df = pd.read_csv(csv_path)
+    
+    # Convert percentage column to numeric
+    df['percentage'] = pd.to_numeric(df['percentage'], errors='coerce')
+
+    # Create a new column to clearly identify biosphere exchanges
+    df['sub_activity_label'] = df.apply(
+        lambda x: f"{x['sub_activity']} ({x['compartment']})" if x['exchange_type'] == 'biosphere' else x['sub_activity'], 
+        axis=1
+    )
+
+    # Get unique activities and their names
+    unique_activities = df[['activity_id', 'activity_name']].drop_duplicates()
+
+    print(f"Total Activities: {len(unique_activities)}")
+
+    # Generate a color palette for biosphere exchanges
+    unique_biosphere_labels = df[df['exchange_type'] == 'biosphere']['sub_activity_label'].unique()
+    biosphere_palette = dict(zip(unique_biosphere_labels, sns.color_palette("husl", len(unique_biosphere_labels))))
+
+    # Loop through each unique activity
+    for _, row in unique_activities.iterrows():
+        activity_id = row['activity_id']
+        activity_name = row['activity_name']
+
+        # Filter data for this activity
+        subset = df[df['activity_id'] == activity_id]
+
+        if subset.empty:
+            continue
+
+        # Filter to sub-activities contributing at least 1%
+        subset = subset[subset['percentage'] >= 1]
+
+        # Pivot data for stacked bar chart
+        pivot_df = subset.pivot_table(
+            values="percentage", 
+            index="impact_indicator", 
+            columns="sub_activity_label", 
+            aggfunc="sum",
+            fill_value=0
+        )
+
+        # Define colors: technosphere in blue, biosphere in unique colors
+        color_map = {
+            sub_activity: "tab:blue" if subset[subset["sub_activity_label"] == sub_activity]["exchange_type"].iloc[0] == "technosphere"
+            else biosphere_palette.get(sub_activity, "tab:red")  # Unique color for each biosphere exchange
+            for sub_activity in pivot_df.columns
+        }
+
+        # Plot
+        ax = pivot_df.plot(kind="bar", stacked=True, figsize=(12, 6), color=[color_map[sub] for sub in pivot_df.columns])
+
+        # Add grid for better readability
+        ax.grid(axis="y", linestyle="--", alpha=0.7)  # Dashed grid, slightly transparent
+
+        plt.title(f"Impact Breakdown for {activity_name}")
+        plt.xlabel("Impact Indicator")
+        plt.ylabel("Percentage Contribution")
+        plt.xticks(rotation=45, ha='right')
+        plt.legend(title="Sub-Activity (Biosphere includes Compartment)", bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        plt.show()
