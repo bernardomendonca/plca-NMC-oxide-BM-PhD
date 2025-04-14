@@ -229,68 +229,87 @@ def visualize_contribution_all_activities_with_grid(csv_path):
         plt.tight_layout()
         plt.show()
 
-def visualize_all_activities_with_detailed_biosphere(csv_path):
+
+
+
+def visualize_all_activities_with_detailed_biosphere(csv_path, filter=None):
     # Load data
     df = pd.read_csv(csv_path)
     
     # Convert percentage column to numeric
     df['percentage'] = pd.to_numeric(df['percentage'], errors='coerce')
 
-    # Create a new column to clearly identify biosphere exchanges
+    # Keep a reference of all impact indicators
+    all_impact_indicators = df['impact_indicator'].unique()
+
+    # Optional filtering by exchange_type
+    if filter in ["biosphere", "technosphere"]:
+        df = df[df['exchange_type'] == filter]
+
+    # Create label for sub-activities
     df['sub_activity_label'] = df.apply(
-        lambda x: f"{x['sub_activity']} ({x['compartment']})" if x['exchange_type'] == 'biosphere' else x['sub_activity'], 
+        lambda x: f"{x['sub_activity']} ({x['compartment']})" if x['exchange_type'] == 'biosphere' else x['sub_activity'],
         axis=1
     )
 
-    # Get unique activities and their names
+    # Get unique activities
     unique_activities = df[['activity_id', 'activity_name']].drop_duplicates()
 
     print(f"Total Activities: {len(unique_activities)}")
 
-    # Generate a color palette for biosphere exchanges
-    unique_biosphere_labels = df[df['exchange_type'] == 'biosphere']['sub_activity_label'].unique()
-    biosphere_palette = dict(zip(unique_biosphere_labels, sns.color_palette("husl", len(unique_biosphere_labels))))
+    # Generate color palette
+    unique_labels = df['sub_activity_label'].unique()
+    color_palette = dict(zip(unique_labels, sns.color_palette("husl", len(unique_labels))))
+    color_palette["Rest"] = "#d3d3d3"  # light gray
 
-    # Loop through each unique activity
+    # Loop through activities
     for _, row in unique_activities.iterrows():
         activity_id = row['activity_id']
         activity_name = row['activity_name']
 
-        # Filter data for this activity
+        # Filter for this activity
         subset = df[df['activity_id'] == activity_id]
 
         if subset.empty:
             continue
 
-        # Filter to sub-activities contributing at least 1%
+        # Only sub-activities with >=1% contribution
         subset = subset[subset['percentage'] >= 1]
 
-        # Pivot data for stacked bar chart
+        # Pivot table (can be empty for some indicators)
         pivot_df = subset.pivot_table(
-            values="percentage", 
-            index="impact_indicator", 
-            columns="sub_activity_label", 
+            values="percentage",
+            index="impact_indicator",
+            columns="sub_activity_label",
             aggfunc="sum",
             fill_value=0
         )
 
-        # Define colors: technosphere in blue, biosphere in unique colors
-        color_map = {
-            sub_activity: "tab:blue" if subset[subset["sub_activity_label"] == sub_activity]["exchange_type"].iloc[0] == "technosphere"
-            else biosphere_palette.get(sub_activity, "tab:red")  # Unique color for each biosphere exchange
-            for sub_activity in pivot_df.columns
-        }
+        # Ensure all impact indicators are represented
+        pivot_df = pivot_df.reindex(all_impact_indicators, fill_value=0)
+
+        # Add 'Rest' to make total 100%
+        pivot_df["Rest"] = 100 - pivot_df.sum(axis=1)
+
+        # Generate color list for plot
+        color_list = [color_palette.get(col, "#cccccc") for col in pivot_df.columns]
 
         # Plot
-        ax = pivot_df.plot(kind="bar", stacked=True, figsize=(12, 6), color=[color_map[sub] for sub in pivot_df.columns])
+        ax = pivot_df.plot(
+            kind="bar",
+            stacked=True,
+            figsize=(12, 6),
+            color=color_list
+        )
 
-        # Add grid for better readability
-        ax.grid(axis="y", linestyle="--", alpha=0.7)  # Dashed grid, slightly transparent
-
+        # Add grid and labels
+        ax.grid(axis="y", linestyle="--", alpha=0.7)
+        # title_filter = f" ({filter.capitalize()} only)" if filter else ""
+        # If want to include filter, just add it below after {activity_name}, as in {title_filter}
         plt.title(f"Impact Breakdown for {activity_name}")
         plt.xlabel("Impact Indicator")
         plt.ylabel("Percentage Contribution")
         plt.xticks(rotation=45, ha='right')
-        plt.legend(title="Sub-Activity (Biosphere includes Compartment)", bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.legend(title="Sub-Activity", bbox_to_anchor=(1.05, 1), loc='upper left')
         plt.tight_layout()
         plt.show()
