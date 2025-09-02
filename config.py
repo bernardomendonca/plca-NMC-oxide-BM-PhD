@@ -39,6 +39,31 @@ recipe_endpoint_h_a = [
 ]
 
 
+recipe_midpoint_h_premise_gwp = [
+    ('ReCiPe Midpoint (H)', 'terrestrial ecotoxicity', 'TETPinf'),
+    ('ReCiPe Midpoint (H)', 'natural land transformation', 'NLTP'),
+    ('ReCiPe Midpoint (H)', 'photochemical oxidant formation', 'POFP'),
+    ('ReCiPe Midpoint (H)', 'human toxicity', 'HTPinf'),
+    ('ReCiPe Midpoint (H)', 'marine eutrophication', 'MEP'),
+# IMPORTANT: We are substituting the ReCiPe Midpoint (H) GWP100 with the GWP 100a, incl. H and bio CO2
+# See https://github.com/polca/premise_gwp?tab=readme-ov-file#impact-category
+    # ('ReCiPe Midpoint (H)', 'climate change', 'GWP100'),
+    ('IPCC 2013', 'climate change', 'GWP 100a, incl. H and bio CO2'),
+    ('ReCiPe Midpoint (H)', 'particulate matter formation', 'PMFP'),
+    ('ReCiPe Midpoint (H)', 'agricultural land occupation', 'ALOP'),
+    ('ReCiPe Midpoint (H)', 'freshwater eutrophication', 'FEP'),
+    ('ReCiPe Midpoint (H)', 'metal depletion', 'MDP'),
+    ('ReCiPe Midpoint (H)', 'terrestrial acidification', 'TAP100'),
+    ('ReCiPe Midpoint (H)', 'water depletion', 'WDP'),
+    ('ReCiPe Midpoint (H)', 'urban land occupation', 'ULOP'),
+    ('ReCiPe Midpoint (H)', 'ionising radiation', 'IRP_HE'),
+    ('ReCiPe Midpoint (H)', 'fossil depletion', 'FDP'),
+    ('ReCiPe Midpoint (H)', 'freshwater ecotoxicity', 'FETPinf'),
+    ('ReCiPe Midpoint (H)', 'marine ecotoxicity', 'METPinf'),
+    ('ReCiPe Midpoint (H)', 'ozone depletion', 'ODPinf')
+]
+
+
 #### DATABASES ####
 
 db_remindSSP1_baseline = [
