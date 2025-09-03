@@ -1,4 +1,11 @@
 input_parameter_selection/*
+!input_parameter_selection/.gitkeep
+
 contribution_analysis/*
+!contribution_analysis/.gitkeep
+
 input_coefficients/*
+!input_coefficients/.gitkeep
+
 outputs/*
+!outputs/.gitkeep
