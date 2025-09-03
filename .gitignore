@@ -1,4 +1,4 @@
-input_parameter_selection/
-contribution_analysis/
-input_coefficients/
-outputs/
+input_parameter_selection/*
+contribution_analysis/*
+input_coefficients/*
+outputs/*
