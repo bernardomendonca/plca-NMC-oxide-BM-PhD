@@ -382,9 +382,16 @@ def process_all_csvs_interpolate(project_name, input_folder, methods_list, datab
 
                 # Interpolate missing coefficients using logistic function
                 if np.isnan(row.get('coeff_2030', np.nan)):
-                    coeff_df.at[index, 'coeff_2030'] = direct_logistic(2030, 2025, coeff_2025, 2040, coeff_2040)
+                    # OLD WRONG WAY:
+                    # coeff_df.at[index, 'coeff_2030'] = direct_logistic(2030, 2025, coeff_2025, 2040, coeff_2040)
+                    # NEW, CORRECT:
+                    coeff_df.at[index, 'coeff_2030'] = direct_logistic(2030, 2025, coeff_2040, 2040, coeff_2025)
+
                 if np.isnan(row.get('coeff_2035', np.nan)):
+                    # OLD WRONG WAY:
                     coeff_df.at[index, 'coeff_2035'] = direct_logistic(2035, 2025, coeff_2025, 2040, coeff_2040)
+                    # NEW, CORRECT:
+                    coeff_df.at[index, 'coeff_2035'] = direct_logistic(2035, 2025, coeff_2040, 2040, coeff_2025)
 
             # Extract activity details
             activity_id = file_name.replace('.csv', '')  # Extract activity ID from file name
